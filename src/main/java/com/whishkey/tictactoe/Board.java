@@ -1,6 +1,9 @@
 package com.whishkey.tictactoe;
 
 import java.util.Arrays;
+import java.util.ArrayList;
+
+// TODO : make parcelable
 
 public class Board {
   private int[][][] board;
@@ -36,6 +39,26 @@ public class Board {
   
   public int[][][] copy() {
     return board;
+  }
+  
+  public ArrayList<Integer> arrList() {
+    ArrayList<Integer> L = new ArrayList<Integer>();
+    for (int[][] z: board) {
+      for (int[] y: z) {
+        for (int x: y) {
+          L.add(x);
+        }
+      }
+    }
+    return L;
+  }
+  
+  public void fromArr(ArrayList<Integer> L) {
+    int index = 0;
+    for (int i: L) {
+      board[index / 9][(index / 3) % 3][index % 3] = i;
+      index += 1;
+    }
   }
   
 }

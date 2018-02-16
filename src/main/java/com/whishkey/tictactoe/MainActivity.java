@@ -2,17 +2,16 @@ package com.whishkey.tictactoe;
 
 /*
   To do:
-  Implement handling of configuration changes
-    (screen rotation),
-  Implement a check for the end game,
   etc.
 */
 
 // Note: "x" state is 0, "o" state is 1, blank state is -1
 // Note: UI is based on a 3 x 3 grid of buttons
 
+import java.util.ArrayList;
 import android.app.Activity;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 import android.widget.Button;
 import android.os.Bundle;
@@ -30,17 +29,22 @@ View.OnClickListener {
   TextView turn_text, win_text, z_text;
   Board b = new Board();
   int x, y, z, turn;
-  boolean gameWin;
+  boolean winFlag;
   
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    
+    this.requestWindowFeature(Window.FEATURE_NO_TITLE); // no annoying app title bar
+    
     setContentView(R.layout.activity_main);
     
-    z = 0;
-    turn = 0;
-    gameWin = false;
-    
+    if (savedInstanceState == null) {
+      z = 0;
+      turn = 0;
+      winFlag = false;
+    }
+     
     turn_text = (TextView) findViewById(R.id.turn_txt);
     z_text = (TextView) findViewById(R.id.z_txt);
     win_text = (TextView) findViewById(R.id.win_txt);
@@ -50,7 +54,46 @@ View.OnClickListener {
     initBut(idArr);
     
   }
+
   
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    // Always call the superclass so it can restore the view hierarchy
+    super.onRestoreInstanceState(savedInstanceState);
+
+    // Restore state members from saved instance
+    turn = savedInstanceState.getInt("STATE_TURN");
+    winFlag = ((savedInstanceState.getInt("STATE_WIN")) != 0);
+    z = savedInstanceState.getInt("STATE_Z");
+    b.fromArr(savedInstanceState.getIntegerArrayList("STATE_BOARD"));
+    
+    updateDisp(b, idArr, z);
+    
+    if (winFlag) {
+      win_text.setText(stateStr(turn  % 2) + " wins!");
+    } else {
+      win_text.setText(" ");
+    }
+    
+    turn_text.setText("Turn " + Integer.toString(turn + 1) + ": " +
+                      stateStr(turn % 2));
+    
+    z_text.setText(Integer.toString(z + 1));
+  }
+  
+  @Override
+  protected void onSaveInstanceState(Bundle savedInstanceState) {
+    // Always call the superclass so it can save the view hierarchy state
+    super.onSaveInstanceState(savedInstanceState);
+    
+    // Save the user's current game state
+    savedInstanceState.putInt("STATE_TURN", turn);
+    savedInstanceState.putInt("STATE_WIN", ((winFlag) ? 1 : 0));
+    savedInstanceState.putInt("STATE_Z", z);
+    savedInstanceState.putIntegerArrayList("STATE_BOARD", b.arrList());
+  }
+  //
+    
   @Override
   public void onClick(View v) {
     switch (v.getId()) {
@@ -73,7 +116,7 @@ View.OnClickListener {
     
       case R.id.button_reset: // reset game, update display
         turn = 0;
-        gameWin = false;
+        winFlag = false;
         b.reset();
         updateDisp(b, idArr, z);
         win_text.setText(" ");
@@ -90,7 +133,7 @@ View.OnClickListener {
           case 1:
             break; // ignore
           default:
-            if (gameWin) {
+            if (winFlag) {
               break;
             }
             
@@ -99,12 +142,10 @@ View.OnClickListener {
             Button B = (Button) v;
             B.setText(stateStr(b.getState(x, y, z)));
             
-            if (checkBoard(b, x, y, z)) { // check if play wins game
+            if (winState(b, x, y, z)) { // check if play wins game
               win_text.setText(stateStr(turn  % 2) + " wins!");
-              gameWin = true;
-            }
-            
-            if (!(gameWin)) {
+              winFlag = true;
+            } else {
               turn += 1;
               turn_text.setText("Turn " + Integer.toString(turn + 1) + ": " +
                                 stateStr(turn % 2));
@@ -145,7 +186,7 @@ View.OnClickListener {
   }
   
   // i hate it b/c it's hard-coded to 3x3x3
-  public boolean checkBoard(Board b, int x, int y, int z) {
+  public boolean winState(Board b, int x, int y, int z) {
     if (checkGrid(b.getGrid(x))) { // i fucked the coordinate order
       return true;
     }
@@ -161,7 +202,6 @@ View.OnClickListener {
       return true;
     }
     
-    grid = new int[3][3];
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         grid[i][j] = b.getState(i, j, z);
@@ -172,7 +212,6 @@ View.OnClickListener {
     }
     
     
-    grid = new int[3][3];
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         grid[i][j] = b.getState(i, j, j);
@@ -182,7 +221,6 @@ View.OnClickListener {
       return true;
     }
     
-    grid = new int[3][3];
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         grid[i][j] = b.getState(i, 2 - j, j);
