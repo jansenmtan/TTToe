@@ -202,6 +202,7 @@ View.OnClickListener {
       return true;
     }
     
+    grid = new int[3][3];
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         grid[i][j] = b.getState(i, j, z);
@@ -212,6 +213,7 @@ View.OnClickListener {
     }
     
     
+    grid = new int[3][3];
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         grid[i][j] = b.getState(i, j, j);
@@ -221,6 +223,7 @@ View.OnClickListener {
       return true;
     }
     
+    grid = new int[3][3];
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         grid[i][j] = b.getState(i, 2 - j, j);
@@ -259,15 +262,18 @@ View.OnClickListener {
       }
     }
     
-    if (grid[1 - 1][1 - 1] == grid[1][1] &&
-        grid[1 + 1][1 + 1] == grid[1][1]) {
+    if (grid[0][0] == grid[1][1] &&
+        grid[2][2] == grid[1][1]) {
       if (grid[1][1] == -1) {
           return false;
         }
       return true;
     }
-    if (grid[1 - 1][1 + 1] == grid[1][1] &&
-        grid[1 + 1][1 - 1] == grid[1][1]) {
+    if (grid[0][2] == grid[1][1] &&
+        grid[2][0] == grid[1][1]) {
+      if (grid[1][1] == -1) {
+          return false;
+      }
       return true;
     }
     
