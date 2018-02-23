@@ -31,17 +31,17 @@ public class Board {
   private int[][][] Fill(int[][][] arr, int n) {
     for (int[][] z: arr) {
       for (int[] y: z) {
-        Arrays.fill(y, -1);
+        Arrays.fill(y, n);
       }
     }
     return arr;
   }
   
-  public int[][][] copy() {
-    return board;
-  }
-  
-  public ArrayList<Integer> arrList() {
+  /**
+   * Place board states into an arraylist
+   * @return L : Arraylist encoded from the board
+   */
+  public ArrayList<Integer> toArr() {
     ArrayList<Integer> L = new ArrayList<Integer>();
     for (int[][] z: board) {
       for (int[] y: z) {
@@ -53,6 +53,10 @@ public class Board {
     return L;
   }
   
+  /**
+   * Reconstructs board from arraylist made from toArr
+   * @param L : Arraylist to decode into the board
+   */
   public void fromArr(ArrayList<Integer> L) {
     int index = 0;
     for (int i: L) {

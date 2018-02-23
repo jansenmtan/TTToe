@@ -1,7 +1,7 @@
 package com.whishkey.tictactoe;
 
 /*
-  To do:
+  TODO : 
   etc.
 */
 
@@ -10,7 +10,9 @@ package com.whishkey.tictactoe;
 
 import java.util.ArrayList;
 import android.app.Activity;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 import android.widget.Button;
@@ -60,15 +62,16 @@ View.OnClickListener {
   protected void onRestoreInstanceState(Bundle savedInstanceState) {
     // Always call the superclass so it can restore the view hierarchy
     super.onRestoreInstanceState(savedInstanceState);
-
+    
     // Restore state members from saved instance
     turn = savedInstanceState.getInt("STATE_TURN");
-    winFlag = ((savedInstanceState.getInt("STATE_WIN")) != 0);
+    winFlag = savedInstanceState.getBoolean("STATE_WIN");
     z = savedInstanceState.getInt("STATE_Z");
     b.fromArr(savedInstanceState.getIntegerArrayList("STATE_BOARD"));
     
     updateDisp(b, idArr, z);
     
+    // Set win text
     if (winFlag) {
       win_text.setText(stateStr(turn  % 2) + " wins!");
     } else {
@@ -88,9 +91,9 @@ View.OnClickListener {
     
     // Save the user's current game state
     savedInstanceState.putInt("STATE_TURN", turn);
-    savedInstanceState.putInt("STATE_WIN", ((winFlag) ? 1 : 0));
+    savedInstanceState.putBoolean("STATE_WIN", winFlag);
     savedInstanceState.putInt("STATE_Z", z);
-    savedInstanceState.putIntegerArrayList("STATE_BOARD", b.arrList());
+    savedInstanceState.putIntegerArrayList("STATE_BOARD", b.toArr());
   }
   //
     
@@ -142,7 +145,7 @@ View.OnClickListener {
             Button B = (Button) v;
             B.setText(stateStr(b.getState(x, y, z)));
             
-            if (winState(b, x, y, z)) { // check if play wins game
+            if (winBoard(b, x, y, z)) { // check if play wins game
               win_text.setText(stateStr(turn  % 2) + " wins!");
               winFlag = true;
             } else {
@@ -154,11 +157,21 @@ View.OnClickListener {
     }
   }
   
-  public int tagInt(View v) { // get int from a view (buttons have int tags)
+  /**
+   *  Get integer tag from a view
+   *  @param View
+   *  @return Integer tag
+   */
+  public int tagInt(View v) {
     return Integer.parseInt(v.getTag().toString());
   }
   
-  public String stateStr(int state) { // return "x" or "o" based on state
+  /**
+   * Return "x" or "o" based on int state
+   * @param state
+   * @return "x" or "o"
+   */
+  public String stateStr(int state) {
     switch (state) {
       case 0:
         return "\u274c"; // "x"
@@ -169,7 +182,13 @@ View.OnClickListener {
     }
   }
   
-  public void updateDisp(Board brd, int[] id_arr, int z) { // updates text on each button in id array
+  /**
+   * Updates text on each button in id array
+   * @param brd
+   * @param id_arr
+   * @param z
+   */
+  public void updateDisp(Board brd, int[] id_arr, int z) {
     for (int id: id_arr) {
       Button but = (Button) findViewById(id);
       int x = tagInt(but) % 3;
@@ -178,58 +197,80 @@ View.OnClickListener {
     }
   }
   
-  public void initBut(int[] id_arr) { // to create buttons easily
+  /**
+   * To initialize buttons easily
+   * @param id_arr
+   */
+  public void initBut(int[] id_arr) {
+    DisplayMetrics metrics = new DisplayMetrics();
+    getWindowManager().getDefaultDisplay().getMetrics(metrics);
+    
+    int width;
+    if ((metrics.widthPixels - 2 * 20) / 4 < 40) {
+      width = 40;
+    } else {
+      width = (metrics.widthPixels - 2 * 20) / 4;
+    }
+    
     for (int id: id_arr) {
       Button but = (Button) findViewById(id);
+      // but.setLayoutParams(new ViewGroup.LayoutParams(40, 40));
       but.setOnClickListener(this);
     }
   }
   
   // i hate it b/c it's hard-coded to 3x3x3
-  public boolean winState(Board b, int x, int y, int z) {
-    if (checkGrid(b.getGrid(x))) { // i fucked the coordinate order
-      return true;
+  /**
+   * Check if a player has won based on last play
+   * @param b Board in
+   * @param x X-pos of last play
+   * @param y Y-pos of last play
+   * @param z Z-pos of last play
+   * @return True if they won, else false
+   */
+  public boolean winBoard(Board b, int x, int y, int z) {
+    if (winGrid(b.getGrid(x))) { // i fucked the coordinate order
+      return true;				   // checks xy board
     }
     
-    
+    // checks xz
     int[][] grid = new int[3][3];
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         grid[i][j] = b.getState(i, y, j);
       }
     }
-    if (checkGrid(grid)) {
+    if (winGrid(grid)) {
       return true;
     }
     
-    grid = new int[3][3];
+    // checks yz
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         grid[i][j] = b.getState(i, j, z);
       }
     }
-    if (checkGrid(grid)) {
+    if (winGrid(grid)) {
       return true;
     }
     
-    
-    grid = new int[3][3];
+    // checks diagonal
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         grid[i][j] = b.getState(i, j, j);
       }
     }
-    if (checkGrid(grid)) {
+    if (winGrid(grid)) {
       return true;
     }
     
-    grid = new int[3][3];
+    // checks opposite diagonal
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         grid[i][j] = b.getState(i, 2 - j, j);
       }
     }
-    if (checkGrid(grid)) {
+    if (winGrid(grid)) {
       return true;
     }
     
@@ -241,8 +282,15 @@ View.OnClickListener {
   
   // could possibly replace with one that checks with some
   // python all([]) function implemented to java
-  public boolean checkGrid(int[][] grid) { // check for win in 2d
+  /**
+   * Checks if the 2d grid is in a win state
+   * @param grid To check
+   * @return True, if a player won, else false
+   */
+  public boolean winGrid(int[][] grid) {
     for (int i = 0; i < 3; i++) {
+      
+      // check horizontals
       if (grid[i][1] == grid[i][0] &&
           grid[i][2] == grid[i][0]) {
         if (grid[i][0] == -1) {
@@ -252,6 +300,7 @@ View.OnClickListener {
       }              // will have to be implied
     }
     
+    // check verticals
     for (int i = 0; i < 3; i++) {
       if (grid[1][i] == grid[0][i] &&
           grid[2][i] == grid[0][i]) {
@@ -262,6 +311,7 @@ View.OnClickListener {
       }
     }
     
+    // check diagonal
     if (grid[0][0] == grid[1][1] &&
         grid[2][2] == grid[1][1]) {
       if (grid[1][1] == -1) {
@@ -269,6 +319,7 @@ View.OnClickListener {
         }
       return true;
     }
+    // check opposite diagonal
     if (grid[0][2] == grid[1][1] &&
         grid[2][0] == grid[1][1]) {
       if (grid[1][1] == -1) {

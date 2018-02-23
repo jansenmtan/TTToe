@@ -8,18 +8,18 @@
     android:gravity="center">
     
     <GridLayout
-        android:columnCount="4"
-        android:rowCount="5"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:rowCount="5" >
     
         <Button
             android:id="@+id/button0"
+            style="@style/ButtonStyle"
             android:layout_column="0"
             android:layout_row="1"
-            style="@style/ButtonStyle"
             android:tag="0"
-            android:text=" " />
+            android:text="@string/button_blank" />
    
         <Button
             android:id="@+id/button1"
@@ -27,7 +27,7 @@
             android:layout_row="1"
             style="@style/ButtonStyle"
             android:tag="1"
-            android:text=" " />
+            android:text="@string/button_blank" />
     
         <Button
             android:id="@+id/button2"
@@ -35,7 +35,7 @@
             android:layout_row="1"
             style="@style/ButtonStyle"
             android:tag="2"
-            android:text=" " />
+            android:text="@string/button_blank" />
     
         <Button
             android:id="@+id/button3"
@@ -43,7 +43,7 @@
             android:layout_row="2"
             style="@style/ButtonStyle"
             android:tag="3"
-            android:text=" " />
+            android:text="@string/button_blank" />
        
         <Button
             android:id="@+id/button4"
@@ -51,7 +51,7 @@
             android:layout_row="2"
             style="@style/ButtonStyle"
             android:tag="4"
-            android:text=" " />
+            android:text="@string/button_blank" />
         
         <Button
             android:id="@+id/button5"
@@ -59,7 +59,7 @@
             android:layout_row="2"
             style="@style/ButtonStyle"
             android:tag="5"
-            android:text=" " />
+            android:text="@string/button_blank" />
         
         <Button
             android:id="@+id/button6"
@@ -67,7 +67,7 @@
             android:layout_row="3"
             style="@style/ButtonStyle"
             android:tag="6"
-            android:text=" " />
+            android:text="@string/button_blank" />
        
         <Button
             android:id="@+id/button7"
@@ -75,7 +75,7 @@
             android:layout_row="3"
             style="@style/ButtonStyle"
             android:tag="7"
-            android:text=" " />
+            android:text="@string/button_blank" />
         
         <Button
             android:id="@+id/button8"
@@ -83,23 +83,23 @@
             android:layout_row="3"
             style="@style/ButtonStyle"
             android:tag="8"
-            android:text=" " />
+            android:text="@string/button_blank" />
         
         <Button
             android:id="@+id/button_up"
+            style="@style/ButtonStyleEnd"
             android:layout_column="3"
             android:layout_row="1"
-            style="@style/ButtonStyleEnd"
             android:tag="up"
-            android:text="\u25b2" />
+            android:text="@string/up_arrow" />
     
         <Button
             android:id="@+id/button_down"
+            style="@style/ButtonStyleEnd"
             android:layout_column="3"
             android:layout_row="3"
-            style="@style/ButtonStyleEnd"
             android:tag="down"
-            android:text="\u25bc" />
+            android:text="@string/down_arrow" />
             
         <Button
             android:id="@+id/button_reset"
@@ -124,8 +124,8 @@
             android:layout_row="4"
             android:layout_gravity="fill"
             android:gravity="center"
-            android:text=" "
-            android:textSize="40dp" />
+            android:text="@string/button_blank"
+            android:textSize="40sp" />
             
         <TextView
             android:id="@+id/z_txt"
@@ -133,7 +133,7 @@
             android:layout_row="2"
             android:layout_gravity="center"
             android:text="1"
-            android:textSize="40dp" />
+            android:textSize="40sp" />
     </GridLayout>
 
 </LinearLayout>
