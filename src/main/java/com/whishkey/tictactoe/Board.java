@@ -58,10 +58,8 @@ public class Board {
    * @param L : Arraylist to decode into the board
    */
   public void fromArr(ArrayList<Integer> L) {
-    int index = 0;
-    for (int i: L) {
-      board[index / 9][(index / 3) % 3][index % 3] = i;
-      index += 1;
+    for (int i = 0; i < L.size(); i++) {
+      board[i / 9][(i / 3) % 3][i % 3] = L.get(i);
     }
   }
   
