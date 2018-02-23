@@ -1,21 +1,21 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="@android:style/Theme.Material" />
+    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault" />
     
     <style name="ButtonStyle">
         <item name="android:layout_gravity">fill_vertical</item>
         <item name="android:layout_margin">0dp</item>
         <!--item name="android:textSize">20dp</item-->
-        <item name="android:layout_width">80sp</item>
-        <item name="android:layout_height">80sp</item>
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">80dp</item>
     </style>
     
     <style name="ButtonStyleEnd">
         <item name="android:layout_gravity">left</item>
         <item name="android:layout_margin">0dp</item>
-        <item name="android:layout_width">80sp</item>
-        <item name="android:layout_height">80sp</item>
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">80dp</item>
     </style>
 
 </resources>
