@@ -36,7 +36,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	boolean winFlag;
 
 	AlertDialog.Builder winDialogBuilder;
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -159,10 +158,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 				if (winBoard(b, x, y, z)) { // check if play wins game
 					win_text.setText(stateStr(turn % 2) + " wins!");
 
-					winDialogBuilder.setMessage(stateStr(turn % 2) + " wins!") // show
-							// dialog
-							.show();
-
+					winDialogBuilder.setMessage(stateStr(turn % 2) + " wins!")
+													.show();
 					winFlag = true;
 				} else {
 					turn += 1;
@@ -222,19 +219,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 * @param id_arr
 	 */
 	public void initBut(int[] id_arr) {
-		DisplayMetrics metrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-		int width;
-		if ((metrics.widthPixels - 2 * 20) / 4 < 40) {
-			width = 40;
-		} else {
-			width = (metrics.widthPixels - 2 * 20) / 4;
-		}
+//		DisplayMetrics metrics = new DisplayMetrics();
+//		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+//
+//		int width;
+//		if ((metrics.widthPixels - 2 * 20) / 4 < 40) {
+//			width = 40;
+//		} else {
+//			width = (metrics.widthPixels - 2 * 20) / 4;
+//		}
 
 		for (int id : id_arr) {
 			Button but = (Button) findViewById(id);
-			// but.setLayoutParams(new ViewGroup.LayoutParams(40, 40));
+//			but.setLayoutParams(new ViewGroup.LayoutParams(width, width));
 			but.setOnClickListener(this);
 		}
 	}
@@ -315,7 +312,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 * @return True, if a player won, else false
 	 */
 	public boolean winGrid(int[][] grid) {
-		
+
 		// check horizontals
 		for (int i = 0; i < 3; i++) {
 			if (grid[i][1] == grid[i][0] && grid[i][2] == grid[i][0]) {
