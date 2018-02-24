@@ -81,7 +81,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		z = savedInstanceState.getInt("STATE_Z");
 		b.fromArr(savedInstanceState.getIntegerArrayList("STATE_BOARD"));
 
-		updateDisp(b, idArr, z);
+		updateDisplay(b, idArr, z);
 
 		// Set win text
 		if (winFlag) {
@@ -115,7 +115,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		case R.id.button_up: // if possible, increase z focus, update display
 			if (z < 3 - 1) {
 				z += 1;
-				updateDisp(b, idArr, z);
+				updateDisplay(b, idArr, z);
 				z_text.setText(Integer.toString(z + 1));
 			}
 			break;
@@ -123,7 +123,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		case R.id.button_down: // if possible, decrease z focus, update display
 			if (z > 0) {
 				z -= 1;
-				updateDisp(b, idArr, z);
+				updateDisplay(b, idArr, z);
 				z_text.setText(Integer.toString(z + 1));
 			}
 			break;
@@ -132,7 +132,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			turn = 0;
 			winFlag = false;
 			b.reset();
-			updateDisp(b, idArr, z);
+			updateDisplay(b, idArr, z);
 			win_text.setText(" ");
 			turn_text.setText("Turn " + Integer.toString(turn + 1) + ": "
 					+ stateStr(turn % 2));
@@ -142,39 +142,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			x = tagInt(v) % 3;
 			y = tagInt(v) / 3;
 
-			switch (b.getState(x, y, z)) {
-			case 0: // if button has existing "x" or "o" state,
-			case 1:
-				break; // ignore
-			default:
-				if (winFlag) {
-					break;
-				}
-
-				b.setState(x, y, z, turn % 2); // otherwise, set state, progress
-
-				Button B = (Button) v;
-				B.setText(stateStr(b.getState(x, y, z)));
-
-				if (winBoard(b, x, y, z)) { // check if play wins game
-					win_text.setText(stateStr(turn % 2) + " wins!");
-
-					winDialogBuilder.setMessage(stateStr(turn % 2) + " wins!")
-													.setPositiveButton("OK",
-															new DialogInterface.OnClickListener() {
-																@Override
-																public void onClick(DialogInterface dialog, int id) {
-																	dialog.cancel();
-																}
-															})
-													.show();
-					winFlag = true;
-				} else {
-					turn += 1;
-					turn_text.setText("Turn " + Integer.toString(turn + 1) + ": "
-							+ stateStr(turn % 2));
-				}
-			}
+			caseButtonGrid(v);
 		}
 	}
 
@@ -205,6 +173,42 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		}
 	}
 
+	public void caseButtonGrid (View v) {
+		switch (b.getState(x, y, z)) {
+		case 0: // if button has existing "x" or "o" state,
+		case 1:
+			break; // ignore
+		default:
+			if (winFlag) {
+				break;
+			}
+
+			b.setState(x, y, z, turn % 2); // otherwise, set state, progress
+
+			Button B = (Button) v;
+			B.setText(stateStr(b.getState(x, y, z)));
+
+			if (winBoard(b, x, y, z)) { // check if play wins game
+				win_text.setText(stateStr(turn % 2) + " wins!");
+
+				winDialogBuilder.setMessage(stateStr(turn % 2) + " wins!")
+												.setPositiveButton("OK",
+														new DialogInterface.OnClickListener() {
+															@Override
+															public void onClick(DialogInterface dialog, int id) {
+																dialog.cancel();
+															}
+														})
+												.show();
+				winFlag = true;
+			} else {
+				turn += 1;
+				turn_text.setText("Turn " + Integer.toString(turn + 1) + ": "
+						+ stateStr(turn % 2));
+			}
+		}
+	}
+
 	/**
 	 * Updates text on each button in id array
 	 * 
@@ -212,7 +216,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 * @param id_arr
 	 * @param z
 	 */
-	public void updateDisp(Board brd, int[] id_arr, int z) {
+	public void updateDisplay(Board brd, int[] id_arr, int z) {
 		for (int id : id_arr) {
 			Button but = (Button) findViewById(id);
 			int x = tagInt(but) % 3;
@@ -227,19 +231,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 * @param id_arr
 	 */
 	public void initBut(int[] id_arr) {
-//		DisplayMetrics metrics = new DisplayMetrics();
-//		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//
-//		int width;
-//		if ((metrics.widthPixels - 2 * 20) / 4 < 40) {
-//			width = 40;
-//		} else {
-//			width = (metrics.widthPixels - 2 * 20) / 4;
-//		}
+		// DisplayMetrics metrics = new DisplayMetrics();
+		// getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		//
+		// int width;
+		// if ((metrics.widthPixels - 2 * 20) / 4 < 40) {
+		// width = 40;
+		// } else {
+		// width = (metrics.widthPixels - 2 * 20) / 4;
+		// }
 
 		for (int id : id_arr) {
 			Button but = (Button) findViewById(id);
-//			but.setLayoutParams(new ViewGroup.LayoutParams(width, width));
+			// but.setLayoutParams(new ViewGroup.LayoutParams(width, width));
 			but.setOnClickListener(this);
 		}
 	}
