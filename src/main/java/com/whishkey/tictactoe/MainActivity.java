@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -159,6 +160,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
 					win_text.setText(stateStr(turn % 2) + " wins!");
 
 					winDialogBuilder.setMessage(stateStr(turn % 2) + " wins!")
+													.setPositiveButton("OK",
+															new DialogInterface.OnClickListener() {
+																@Override
+																public void onClick(DialogInterface dialog, int id) {
+																	dialog.cancel();
+																}
+															})
 													.show();
 					winFlag = true;
 				} else {
