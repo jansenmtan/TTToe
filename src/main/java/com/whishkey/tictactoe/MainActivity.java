@@ -24,22 +24,22 @@ import android.os.Bundle;
 import com.whishkey.tictactoe.R;
 
 public class MainActivity extends Activity implements View.OnClickListener {
+	
 	private final int[] idArr = { R.id.button0, R.id.button1, R.id.button2, R.id.button3,
 			R.id.button4, R.id.button5, R.id.button6, R.id.button7, R.id.button8, };
 	private TextView turn_text, win_text, z_text;
 	private final Board b = new Board();
 	private int x, y, z;
-    private int turn;
+	private int turn;
 	private boolean winFlag;
-
 	private AlertDialog.Builder winDialogBuilder;
 
-    @Override
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE); // no annoying app
-		// title bar
+		
+		// no annoying app title/activity bar
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.activity_main);
 
@@ -52,6 +52,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		turn_text = (TextView) findViewById(R.id.turn_txt);
 		z_text = (TextView) findViewById(R.id.z_txt);
 		win_text = (TextView) findViewById(R.id.win_txt);
+		
+		// set tags for each grid button
+		for (int i = 0; i < idArr.length; i++) {
+			View v = (View) findViewById(idArr[i]);
+			v.setTag(i);
+		}
 
 		initBut(new int[] { R.id.button_up, R.id.button_down, R.id.button_reset });
 
@@ -63,15 +69,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		} else {
 			winDialogBuilder = new AlertDialog.Builder(this);
 		}
+		
+		winDialogBuilder.setPositiveButton("OK",
+			new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
 
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		// Always call the superclass so it can restore the view hierarchy
 		super.onRestoreInstanceState(savedInstanceState);
 
-		// Restore state members from saved instance
 		turn = savedInstanceState.getInt("STATE_TURN");
 		winFlag = savedInstanceState.getBoolean("STATE_WIN");
 		z = savedInstanceState.getInt("STATE_Z");
@@ -94,10 +106,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 	@Override
 	protected void onSaveInstanceState(Bundle savedInstanceState) {
-		// Always call the superclass so it can save the view hierarchy state
 		super.onSaveInstanceState(savedInstanceState);
 
-		// Save the user's current game state
 		savedInstanceState.putInt("STATE_TURN", turn);
 		savedInstanceState.putBoolean("STATE_WIN", winFlag);
 		savedInstanceState.putInt("STATE_Z", z);
@@ -108,7 +118,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 
-		case R.id.button_up: // if possible, increase z focus, update display
+		// if possible, increase z focus, update display
+		case R.id.button_up:
 			if (z < 3 - 1) {
 				z += 1;
 				updateDisplay(b, idArr, z);
@@ -116,15 +127,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			}
 			break;
 
-		case R.id.button_down: // if possible, decrease z focus, update display
-			if (z > 0) {
+		// if possible, decrease z focus, update display
+		case R.id.button_down:
+			if (z > 1 - 1) {
 				z -= 1;
 				updateDisplay(b, idArr, z);
 				z_text.setText(Integer.toString(z + 1));
 			}
 			break;
 
-		case R.id.button_reset: // reset game, update display
+		// reset game, update display
+		case R.id.button_reset:
 			turn = 0;
 			winFlag = false;
 			b.reset();
@@ -134,6 +147,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 					+ stateStr(turn % 2));
 			break;
 
+		// Grid button: if not set: set state, update display,
+		// check if play wins game, increment turn. Else, ignore.
 		default:
 			x = tagInt(v) % 3;
 			y = tagInt(v) / 3;
@@ -148,8 +163,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 * @param View
 	 * @return Integer tag
 	 */
-    int tagInt(View v) {
-		return Integer.parseInt(v.getTag().toString());
+	int tagInt(View v) {
+		return (int) v.getTag();
 	}
 
 	/**
@@ -171,37 +186,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 	void caseButtonGrid(View v) {
 		switch (b.getState(x, y, z)) {
-		case 0: // if button has existing "x" or "o" state,
-		case 1:
-			break; // ignore
-		default:
-			if (winFlag) {
-				break;
-			}
-
-			b.setState(x, y, z, turn % 2); // otherwise, set state, progress
-
-			Button B = (Button) v;
-			B.setText(stateStr(b.getState(x, y, z)));
-
-			if (winBoard(b, x, y, z)) { // check if play wins game
-				win_text.setText(stateStr(turn % 2) + " wins!");
-
-				winDialogBuilder.setMessage(stateStr(turn % 2) + " wins!")
-												.setPositiveButton("OK",
-														new DialogInterface.OnClickListener() {
-															@Override
-															public void onClick(DialogInterface dialog, int id) {
-																dialog.cancel();
-															}
-														})
-												.show();
-				winFlag = true;
-			} else {
-				turn += 1;
-				turn_text.setText("Turn " + Integer.toString(turn + 1) + ": "
-						+ stateStr(turn % 2));
-			}
+			case 0: // if button has existing "x" or "o" state,
+			case 1:
+				break; // ignore
+			default:
+				if (winFlag) {
+					break;
+				}
+	
+				b.setState(x, y, z, turn % 2); // otherwise, set state, progress
+	
+				Button B = (Button) v;
+				B.setText(stateStr(b.getState(x, y, z)));
+	
+				if (winBoard(b, x, y, z)) { // check if play wins game
+					win_text.setText(stateStr(turn % 2) + " wins!");
+	
+					winDialogBuilder
+						.setMessage(stateStr(turn % 2) + " wins!")
+						.show();
+					
+					winFlag = true;
+				} else {
+					turn += 1;
+					turn_text.setText("Turn " + Integer.toString(turn + 1) + ": "
+							+ stateStr(turn % 2));
+				}
 		}
 	}
 

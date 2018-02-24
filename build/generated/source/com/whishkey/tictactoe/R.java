@@ -35,10 +35,9 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040000;
-        public static final int button_blank=0x7f040002;
-        public static final int down_arrow=0x7f040004;
+        public static final int down_arrow=0x7f040003;
         public static final int title_activity_main=0x7f040001;
-        public static final int up_arrow=0x7f040003;
+        public static final int up_arrow=0x7f040002;
     }
     public static final class style {
         /**  Base application theme. 
