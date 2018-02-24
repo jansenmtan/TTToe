@@ -59,7 +59,7 @@ public class Board {
    */
   public void fromArr(ArrayList<Integer> L) {
     for (int i = 0; i < L.size(); i++) {
-      board[i / 9][(i / 3) % 3][i % 3] = L.get(i);
+      board[(i / 3) / 3][(i / 3) % 3][i % 3] = L.get(i);
     }
   }
   
