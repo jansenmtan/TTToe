@@ -7,14 +7,13 @@ package com.whishkey.tictactoe;
 
 // Note: "x" state is 0, "o" state is 1, blank state is -1
 // Note: UI is based on a 3 x 3 grid of buttons
-
-import java.util.ArrayList;
+// Note: Tab size is set to 2 spaces
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
-import android.util.DisplayMetrics;
+//import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -22,23 +21,20 @@ import android.widget.TextView;
 import android.widget.Button;
 import android.os.Build;
 import android.os.Bundle;
-import android.widget.Toast;
 import com.whishkey.tictactoe.R;
 
 public class MainActivity extends Activity implements View.OnClickListener {
-	Button b0, b1, b2, b3, b4, b5, b6, b7, b8;
-	int[] idArr = { R.id.button0, R.id.button1, R.id.button2, R.id.button3,
+	private final int[] idArr = { R.id.button0, R.id.button1, R.id.button2, R.id.button3,
 			R.id.button4, R.id.button5, R.id.button6, R.id.button7, R.id.button8, };
-	Button bU, bD, bR;
+	private TextView turn_text, win_text, z_text;
+	private final Board b = new Board();
+	private int x, y, z;
+    private int turn;
+	private boolean winFlag;
 
-	TextView turn_text, win_text, z_text;
-	Board b = new Board();
-	int x, y, z, turn;
-	boolean winFlag;
+	private AlertDialog.Builder winDialogBuilder;
 
-	AlertDialog.Builder winDialogBuilder;
-
-	@Override
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -152,7 +148,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 * @param View
 	 * @return Integer tag
 	 */
-	public int tagInt(View v) {
+    int tagInt(View v) {
 		return Integer.parseInt(v.getTag().toString());
 	}
 
@@ -162,7 +158,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 * @param state
 	 * @return "x" or "o"
 	 */
-	public String stateStr(int state) {
+    String stateStr(int state) {
 		switch (state) {
 		case 0:
 			return "\u274c"; // "x"
@@ -173,7 +169,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		}
 	}
 
-	public void caseButtonGrid (View v) {
+	void caseButtonGrid(View v) {
 		switch (b.getState(x, y, z)) {
 		case 0: // if button has existing "x" or "o" state,
 		case 1:
@@ -216,7 +212,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 * @param id_arr
 	 * @param z
 	 */
-	public void updateDisplay(Board brd, int[] id_arr, int z) {
+    void updateDisplay(Board brd, int[] id_arr, int z) {
 		for (int id : id_arr) {
 			Button but = (Button) findViewById(id);
 			int x = tagInt(but) % 3;
@@ -230,7 +226,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 * 
 	 * @param id_arr
 	 */
-	public void initBut(int[] id_arr) {
+    void initBut(int[] id_arr) {
 		// DisplayMetrics metrics = new DisplayMetrics();
 		// getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		//
@@ -262,7 +258,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 *          Z-pos of last play
 	 * @return True if they won, else false
 	 */
-	public boolean winBoard(Board b, int x, int y, int z) {
+    boolean winBoard(Board b, int x, int y, int z) {
 		if (winGrid(b.getGrid(x))) { // i fucked the coordinate order
 			return true; // checks xy board
 		}
@@ -304,12 +300,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 				grid[i][j] = b.getState(i, 2 - j, j);
 			}
 		}
-		if (winGrid(grid)) {
-			return true;
-		}
+        return winGrid(grid);
 
-		return false;
-	}
+    }
 
 	// did two separate, more flexible algorithms before settling
 	// to this inelegant one
@@ -323,7 +316,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 *          To check
 	 * @return True, if a player won, else false
 	 */
-	public boolean winGrid(int[][] grid) {
+    boolean winGrid(int[][] grid) {
 
 		// check horizontals
 		for (int i = 0; i < 3; i++) {
@@ -350,11 +343,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			return true;
 		}
 		// check opposite diagonal
-		if (grid[0][2] == grid[1][1] && grid[2][0] == grid[1][1] && grid[1][1] != -1) {
-			return true;
-		}
+        return grid[0][2] == grid[1][1] && grid[2][0] == grid[1][1] && grid[1][1] != -1;
 
-		return false;
-	}
+    }
 
 }
